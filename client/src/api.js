@@ -1,10 +1,7 @@
-export class ApiError extends Error {
-  constructor(message, status, fields) {
-    super(message);
-    this.status = status;
-    this.fields = fields;
-  }
-}
+import { ApiError } from './apiError.js';
+import { localApi } from './localApi.js';
+
+export { ApiError };
 
 async function request(method, url, body) {
   let res;
@@ -31,7 +28,7 @@ const qs = (params) => {
   return s ? `?${s}` : '';
 };
 
-export const api = {
+const serverApi = {
   listSubscriptions: (filters = {}) => request('GET', `/subscriptions${qs(filters)}`),
   getSubscription: (id) => request('GET', `/subscriptions/${id}`),
   createSubscription: (data) => request('POST', '/subscriptions', data),
@@ -43,3 +40,6 @@ export const api = {
   settings: () => request('GET', '/settings'),
   saveSettings: (data) => request('PUT', '/settings', data),
 };
+
+// В статической сборке (GitHub Pages) данные хранятся в браузере.
+export const api = import.meta.env.VITE_STORAGE === 'local' ? localApi : serverApi;

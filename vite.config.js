@@ -5,8 +5,9 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   root: 'client',
+  base: mode === 'pages' ? '/subscription-tracker/' : '/',
   plugins: [react()],
   resolve: { alias: { '@shared': path.resolve(__dirname, 'shared') } },
   server: {
@@ -15,4 +16,4 @@ export default defineConfig({
     proxy: { '/api': `http://localhost:${process.env.PORT || 3001}` },
   },
   build: { outDir: '../dist', emptyOutDir: true },
-});
+}));
